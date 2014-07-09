@@ -1,0 +1,20 @@
+# Configuration settings for TVC standalone
+# Define files to be used by the pipeline for analysis.  The script will read in this configuration
+# file and process the data accordingly.  
+#
+# NOTE:
+# Entries must be in the form of 
+#
+#     <key> <value> 
+#
+# When defining files, it's best to use the full system path to the file in order to prevent issues
+
+# System Params 
+TVC_ROOT_DIR </path/to/tvc/bin>
+
+# Pipeline Params
+REFERENCE </path/to/reference/dir>
+TVC_PARAM </path/to/param/file.json>
+BED_MERGED_PLAIN </path/to/merged.plain.bed>
+BED_UNMERGED_DETAIL </path/to/unmerged.detail.bed>
+HOTSPOT_VCF </path/to/hotspot.left-aligned.vcf>
