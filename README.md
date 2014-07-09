@@ -21,6 +21,7 @@ This repo requires the following in order to run correctly:
 * Directory of BAM files
 
 In general setting up a working directory similar to this will aid in running custom analyses:
+
 `
     .
     ├── bams
