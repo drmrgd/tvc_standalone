@@ -22,7 +22,7 @@ This repo requires the following in order to run correctly:
 
 In general setting up a working directory similar to this will aid in running custom analyses:
 
-`
+```bash
     .
     ├── bams
     │   └── <dir_of_bams> #must be indexed
@@ -36,7 +36,7 @@ In general setting up a working directory similar to this will aid in running cu
     ├── tvc_launcher.sh
     └── variantCaller_v4.2.2
         └── <build_files>
-`
+```
 A skeleton working directory environment is provided, and can be populated with the files necessary to process a run.
 This is only out of convenience, however, as the file paths can be where you want, as long as this is reflected in
 the 'config' file.
