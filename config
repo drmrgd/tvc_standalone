@@ -9,12 +9,26 @@
 #
 # When defining files, it's best to use the full system path to the file in order to prevent issues
 
-# System Params 
-TVC_ROOT_DIR </path/to/tvc/bin>
+#####################
+### System Params ###
+#####################
+TVC_ROOT_DIR </path/to/tvc/root/dir>
 
-# Pipeline Params
-REFERENCE </path/to/reference/dir>
-TVC_PARAM </path/to/param/file.json>
-BED_MERGED_PLAIN </path/to/merged.plain.bed>
-BED_UNMERGED_DETAIL </path/to/unmerged.detail.bed>
-HOTSPOT_VCF </path/to/hotspot.left-aligned.vcf>
+#######################
+### Pipeline Params ###
+#######################
+REFERENCE </path/to/reference.fasta>
+TVC_PARAM </path/to/parameters.json>
+ERROR_MOTIF </path/to/error_motifs.txt>
+
+########################
+### Region BED Files ###
+########################
+BED_MERGED_PLAIN </path/to/regions_mergedPlain.bed>
+BED_UNMERGED_DETAIL </path/to/regions_unmergedDetail.bed>
+
+#########################
+### Hotspot VCF Files ###
+#########################
+# MATCH
+HOTSPOT_VCF </path/to/hotspots.vcf>

@@ -5,7 +5,7 @@
 #
 # 7/2/2014 - D Sims
 ###################################################################################################################
-version="v0.7.0_102814"
+version="v1.1.0_032415"
 script=$(basename $0)
 debug=1
 usage="$( cat <<EOT
@@ -46,17 +46,17 @@ do
             config_file="$OPTARG"
             if [[ ! -e "$config_file" ]]; then
                 echo "ERROR: Selected config file '$config_file' can not be found"
-                exit 0
+                exit
             fi
             ;;
         v)
             echo -e "$script - $version\n"
-            exit 0
+            exit
             ;;
         h)
             echo "$script - $version"
             echo -e "$usage\n"
-            exit 0
+            exit
             ;;
         /?)
             echo "Invalid option: -$OPTARG\n"
@@ -75,7 +75,7 @@ if (( $# < 2 )); then
 fi
 
 outdir_root=$1
-input_bam=$2
+input_bam=$(readlink -f $2)
 
 cwd=$(pwd)
 now() { now=$(date +%c); echo -n "[$now]:"; }
@@ -84,6 +84,7 @@ now() { now=$(date +%c); echo -n "[$now]:"; }
 sample_name=$(echo $(basename $input_bam) | perl -pe 's/(.*?)(_rawlib)?.bam/\1/')
 outdir="$cwd/$outdir_root/${sample_name}_out"
 ptrim_bam="${outdir}/${sample_name}_PTRIM.bam"
+post_proc_bam="${outdir}/${sample_name}_processed.bam"
 
 echo "$(now) TVC Standalone Pipeline starting..."
 
@@ -161,6 +162,7 @@ tvc_params[SAMPLE]=$sample_name
 tvc_params[OUTDIR]=$outdir
 tvc_params[BAM]=$input_bam
 tvc_params[TRIMBAM]=$ptrim_bam
+tvc_params[PROCBAM]=$post_proc_bam
 
 if [[ $debug -eq 1 ]]; then
     echo "Params as passed to TVC:"
@@ -172,13 +174,15 @@ fi
 
 tvc_launch_cmd="python $TVC_BIN_DIR/variant_caller_pipeline.py    \
         --num-threads       "34"                                  \
-        --parameters-file   "${tvc_params[TVC_PARAM]}"            \
         --input-bam         "${tvc_params[BAM]}"                  \
-        --reference-fasta   "${tvc_params[REFERENCE]}"            \
-        --region-bed        "${tvc_params[BED_MERGED_PLAIN]}"     \
         --primer-trim-bed   "${tvc_params[BED_UNMERGED_DETAIL]}"  \
+        --postprocessed-bam "${tvc_params[PROCBAM]}"              \
+        --reference-fasta   "${tvc_params[REFERENCE]}"            \
+        --output-dir        "${tvc_params[OUTDIR]}"               \
+        --parameters-file   "${tvc_params[TVC_PARAM]}"            \
+        --region-bed        "${tvc_params[BED_MERGED_PLAIN]}"     \
         --hotspot-vcf       "${tvc_params[HOTSPOT_VCF]}"          \
-        --output-dir        "${tvc_params[OUTDIR]}"                         
+        --error-motifs      "${tvc_params[ERROR_MOTIF]}"          \
 "
 if [[ $debug -eq 1 ]]; then
     echo "Formatted launch cmd:"

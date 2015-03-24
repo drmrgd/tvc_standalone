@@ -1,3 +1,0 @@
-- Add `getopts` to tvc_launcher in order to set up some more options.
-- Add custom config file paths; use a command line option to look for config file.
-- Update config file and file name to something more unique ('config' not too good!).
