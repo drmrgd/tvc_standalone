@@ -5,7 +5,7 @@
 #
 # 7/2/2014 - D Sims
 ###################################################################################################################
-version="v1.1.0_032415"
+version="v1.2.0_102715"
 script=$(basename $0)
 debug=1
 usage="$( cat <<EOT
@@ -15,7 +15,7 @@ Launcher script for standalone version of TVC created to make adjusting paramete
 more simple.  
 
 Script will read a default config file located in the current working directory by default.  If a custom config 
-is desired, one can be fed to the script using the '-c' option.  The file must out line the following parameters:
+is desired, one can be fed to the script using the '-c' option.  The file must have the following parameters:
 
     TVC_ROOT_DIR        : Location of the TVC binaries
     REFERENCE           : Location of the hg19.fasta reference sequence
@@ -24,8 +24,8 @@ is desired, one can be fed to the script using the '-c' option.  The file must o
     BED_UNMERGED_DETAIL : Location of the Detailed, Unmerged regions BED file.
     HOTSPOT_VCF         : Location of the hotspots VCF file to be used in the analysis
 
-For the time being, all of these parameters must be used in the config file.  For an example, see the default config
-file in the current directory
+For the time being, all of these parameters must be used in the config file, except for the hotspots file.  For an example, 
+see the default config file in the current directory
 
 Other options:
     -c    Use a custom config file instead of the default in the current working dir
@@ -172,18 +172,35 @@ if [[ $debug -eq 1 ]]; then
     echo
 fi
 
-tvc_launch_cmd="python $TVC_BIN_DIR/variant_caller_pipeline.py    \
-        --num-threads       "34"                                  \
-        --input-bam         "${tvc_params[BAM]}"                  \
-        --primer-trim-bed   "${tvc_params[BED_UNMERGED_DETAIL]}"  \
-        --postprocessed-bam "${tvc_params[PROCBAM]}"              \
-        --reference-fasta   "${tvc_params[REFERENCE]}"            \
-        --output-dir        "${tvc_params[OUTDIR]}"               \
-        --parameters-file   "${tvc_params[TVC_PARAM]}"            \
-        --region-bed        "${tvc_params[BED_MERGED_PLAIN]}"     \
-        --hotspot-vcf       "${tvc_params[HOTSPOT_VCF]}"          \
-        --error-motifs      "${tvc_params[ERROR_MOTIF]}"          \
-"
+if [[ ${tvc_params[HOTSPOT_VCF]+set} ]]; then
+    echo "$(now) INFO: Using hotspots file: ${tvc_params[HOTSPOT_VCF]}."
+    tvc_launch_cmd="python $TVC_BIN_DIR/variant_caller_pipeline.py    \
+            --num-threads       "34"                                  \
+            --input-bam         "${tvc_params[BAM]}"                  \
+            --primer-trim-bed   "${tvc_params[BED_UNMERGED_DETAIL]}"  \
+            --postprocessed-bam "${tvc_params[PROCBAM]}"              \
+            --reference-fasta   "${tvc_params[REFERENCE]}"            \
+            --output-dir        "${tvc_params[OUTDIR]}"               \
+            --parameters-file   "${tvc_params[TVC_PARAM]}"            \
+            --region-bed        "${tvc_params[BED_MERGED_PLAIN]}"     \
+            --hotspot-vcf       "${tvc_params[HOTSPOT_VCF]}"          \
+            --error-motifs      "${tvc_params[ERROR_MOTIF]}"          \
+    "
+else
+    echo "$(now) INFO: Running TVC without a hotspots file"
+    tvc_launch_cmd="python $TVC_BIN_DIR/variant_caller_pipeline.py    \
+            --num-threads       "34"                                  \
+            --input-bam         "${tvc_params[BAM]}"                  \
+            --primer-trim-bed   "${tvc_params[BED_UNMERGED_DETAIL]}"  \
+            --postprocessed-bam "${tvc_params[PROCBAM]}"              \
+            --reference-fasta   "${tvc_params[REFERENCE]}"            \
+            --output-dir        "${tvc_params[OUTDIR]}"               \
+            --parameters-file   "${tvc_params[TVC_PARAM]}"            \
+            --region-bed        "${tvc_params[BED_MERGED_PLAIN]}"     \
+            --error-motifs      "${tvc_params[ERROR_MOTIF]}"          \
+    "
+fi
+
 if [[ $debug -eq 1 ]]; then
     echo "Formatted launch cmd:"
 fi
